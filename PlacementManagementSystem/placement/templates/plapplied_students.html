@@ -1,0 +1,166 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile | Placebridge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background: #2A3F54;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .sidebar button {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            padding: 10px;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .sidebar button:hover {
+            background: #1E2B3A;
+            border-radius: 5px;
+        }
+        .sidebar img {
+            width: 20px;
+            margin-right: 10px;
+        }
+        .logout-btn {
+            margin-top: auto;
+            background: #D9534F;
+        }
+        .logout-btn:hover {
+            background: #C9302C;
+        }
+        .content {
+            flex-grow: 1;
+            background: #F3F4F6;
+            padding: 30px;
+        }
+        .content h2 {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #2A3F54;
+            color: white;
+        }
+        tr:hover {
+            background: #f5f5f5;
+        }
+        .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        .resume-link {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .resume-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <button onclick="location.href='{% url 'placement_dashboard' %}'"><img src="{% static 'placement/hiring.png' %}" alt="New Placement"> New Placement</button>
+        <button onclick="location.href='{% url 'pl_placement_details' %}'"><img src="{% static 'placement/details.png' %}" alt="Placement Details"> Placement Details</button>
+        <button onclick="location.href='{% url 'pl_student_profile' %}'"><img src="{% static 'placement/student.png' %}" alt="Student Profile"> Student Profile</button>
+        <button onclick="location.href='{% url 'pl_applied_students' %}'"><img src="{% static 'placement/appstu.png' %}" alt="Applied Students"> Applied Student Details</button>
+        <button onclick="location.href='{% url 'pl_alumni' %}'"><img src="{% static 'placement/alumini.png' %}" alt="Alumni"> Alumni</button>
+        <button class="logout-btn" onclick="confirmLogout()"><img src="{% static 'placement/logout.png' %}" alt="Log Out"> Log Out</button>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content">
+        <h2>Student Application Details</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Placement ID</th>
+                    <th>Student ID</th>
+                    <th>Student Name</th>
+                    <th>Company</th>
+                    <th>Company Email</th>
+                    <th>Position</th>
+                    <th>Year of Passout</th>
+                    <th>Student's CGPA</th>
+                    <th>Student's Backlogs</th>
+                    <th>Status</th>
+                    <th>Approve/Reject</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in applications %}
+                <tr>
+                    <td>{{ application.placement_id.placement_id }}</td>
+                    <td>{{ application.student_id.student_id }}</td>
+                    <td>{{ application.student_id.name }}</td>
+                    <td>{{ application.placement_id.company_id.company_name }}</td>
+                    <td>{{ application.placement_id.email }}</td>
+                    <td>{{ application.placement_id.position }}</td>
+                    <td>{{ application.passout_year }}</td> 
+                    <td>{{ application.cgpa }}</td>
+                    <td>{{ application.backlogs }}</td>
+                    <td>{{ application.status }}</td>
+                    <td>
+                        {% if application.status == "Applied" %}
+                            <a href="{% url 'update_application_status' application.application_id 'Selected' %}" class="btn-approve">Approve</a>
+                            <a href="{% url 'update_application_status' application.application_id 'Rejected' %}" class="btn-reject">Reject</a>
+                        {% else %}
+                            {{ application.status }}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function confirmLogout() {
+            let confirmation = confirm("Are you sure you want to log out?");
+            if (confirmation) {
+                window.location.href = "{% url 'logout' %}"; 
+            }
+        }
+    </script>
+</body>
+</html>
+

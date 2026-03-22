@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placement Officer Dashboard | Placebridge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background: #2A3F54;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .sidebar button {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            padding: 10px;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .sidebar button:hover {
+            background: #1E2B3A;
+            border-radius: 5px;
+        }
+        .sidebar img {
+            width: 20px;
+            margin-right: 10px;
+        }
+        .logout-btn {
+            margin-top: auto;
+            background: #D9534F;
+        }
+        .logout-btn:hover {
+            background: #C9302C;
+        }
+        .content {
+            flex-grow: 1;
+            background: #F3F4F6;
+            padding: 30px;
+        }
+        .content h2 {
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-group select{
+            width: 90%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .submit-btn {
+            background: #2A3F54;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .submit-btn:hover {
+            background: #1E2B3A;
+        }
+    </style>
+    <script>
+        function confirmLogout() {
+            let confirmation = confirm("Are you sure you want to log out?");
+            if (confirmation) {
+                window.location.href = "{% url 'logout' %}"; 
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <button onclick="location.href='{% url 'placement_dashboard' %}'"><img src="{% static 'placement/hiring.png' %}" alt="New Placement"> New Placement</button>
+        <button onclick="location.href='{% url 'pl_placement_details' %}'"><img src="{% static 'placement/details.png' %}" alt="Placement Details"> Placement Details</button>
+        <button onclick="location.href='{% url 'pl_student_profile' %}'"><img src="{% static 'placement/student.png' %}" alt="Student Profile"> Student Profile</button>
+        <button onclick="location.href='{% url 'pl_applied_students' %}'"><img src="{% static 'placement/appstu.png' %}" alt="Applied Students"> Applied Student Details</button>
+        <button onclick="location.href='{% url 'pl_alumni' %}'"><img src="{% static 'placement/alumini.png' %}" alt="Alumni"> Alumni</button>
+
+        
+        <!-- Log Out Button -->
+        <button class="logout-btn"  onclick="confirmLogout()"><img src="{% static 'placement/logout.png' %}" alt="Log Out"> Log Out</button>
+    </div>
+
+    {% block content %}
+    <!-- Content Area -->
+    <div class="content">
+        <h2>Add New Placement</h2>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-container">
+                <div class="form-group">
+                    <label for="company">Company Name</label>
+                    <select id="company" name="company" required>
+                        {% for company in companies %}
+                        <option value="{{ company.company_id }}">{{ company.company_name }}</option>
+                        {% endfor %}
+                    </select>
+                    <a href="{% url 'addcompany' %}">Add</a>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="contact_number">Contact Number</label>
+                    <input type="text" id="contact_number" name="contact_number" pattern="[0-9]{10}" maxlength="10" required>
+                </div>
+                <div class="form-group">
+                    <label for="position">Position</label>
+                    <input type="text" id="position" name="position" required>
+                </div>
+                <div class="form-group">
+                    <label for="skill">Skill</label>
+                    <input type="text" id="skill" name="skill" required>
+                </div>
+                <div class="form-group">
+                    <label for="date_of_drive">Date of Drive</label>
+                    <input type="date" id="date_of_drive" name="date_of_drive" required>
+                </div>
+                <div class="form-group">
+                    <label for="backlogs">Backlogs</label>
+                    <input type="number" id="backlogs" name="backlogs" min=0 required>
+                </div>
+                <div class="form-group">
+                    <label for="cgpa">CGPA</label>
+                    <input type="text" id="cgpa" name="cgpa" required>
+                </div>
+            </div>
+            <button type="submit" class="submit-btn">Save</button>
+        </form>
+    </div>
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,208 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile | Placebridge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            height: 100vh;
+            background: #F3F4F6;
+        }
+        .sidebar {
+            width: 250px;
+            background: #2A3F54;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .sidebar button {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            padding: 10px;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+        }
+        .sidebar button:hover {
+            background: #1E2B3A;
+            border-radius: 5px;
+        }
+        .sidebar button img {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+        }
+        .logout-btn {
+            margin-top: auto;
+            background: #D9534F;
+        }
+        .logout-btn:hover {
+            background: #C9302C;
+        }
+        .content {
+            flex-grow: 1;
+            background: #FFFFFF;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px;
+            overflow-y: auto;
+        }
+        .content h2 {
+            margin-bottom: 20px;
+        }
+        .form-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Creates three equal-width columns */
+            gap: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .submit-btn {
+            background: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+            font-size: 16px;
+            margin-top: 20px;
+            width: 100%;
+        }
+        .submit-btn:hover {
+            background: #218838;
+        }
+        .error-message {
+            color: #ff4d4d; font-size: 14px;
+            margin-top: -10px;
+        }
+    </style>
+    <script>
+        function showUpdateMessage() {
+            alert('Updated successfully!');
+        }
+        function confirmLogout() {
+            if (confirm("Are you sure you want to log out?")) {
+                location.href = '{% url 'logout' %}';
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <button onclick="location.href='{% url 'student_dashboard' %}'"><img src="{% static 'placement/uprofile.png' %}" alt="Update Profile">Update Profile</button>
+        <button onclick="location.href='{% url 'stplacement_details' %}'"><img src="{% static 'placement/plist.png' %}" alt="Placement List">Placement List</button>
+        <button onclick="location.href='{% url 'stapplication_details' %}'"><img src="{% static 'placement/papply.png' %}" alt="Placement Applied">Placement Applied List</button>
+        <button onclick="location.href='{% url 'st_alumni' %}'"><img src="{% static 'placement/alumini.png' %}" alt="Alumni">Alumni</button>
+        <button onclick="location.href='{% url 'stnotification' %}'"><img src="{% static 'placement/notification.png' %}" alt="Notification">Notification</button>
+        <button class="logout-btn" onclick="confirmLogout()"><img src="{% static 'placement/logout.png' %}" alt="Log Out">Log out</button>
+    </div>
+
+    {% block content %}
+    <!-- Content Area -->
+    <div class="content">
+        <h2>Update Profile</h2>
+        {% if messages %}
+            {% for message in messages %}
+                <p class="error-message">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+        <form action="{% url 'student_dashboard' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-container">
+                <div class="form-group">
+                    <label for="student_name">Student Name</label>
+                    <input type="text" id="student_name" name="student_name" value="{{ student.name }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select id="gender" name="gender" required>
+                        <option value="Male" {% if student.Gender == "Male" %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if student.Gender == "Female" %}selected{% endif %}>Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dob">Date of Birth</label>
+                    <input type="date" id="dob" name="dob" value="{{ student.Birth_date|date:'Y-m-d' }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="contact">Contact Number</label>
+                    <input type="text" id="contact" name="contact" pattern="[0-9]{10}" maxlength="10" value="{{ student.contact }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">E-Mail ID</label>
+                    <input type="email" id="email" name="email" value="{{ student.email }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="branch">Branch</label>
+                    <input type="text" id="branch" name="branch" value="{{ student.branch }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="sslc">SSLC %</label>
+                    <input type="text" id="sslc" name="sslc" value="{{ student.sslc_per }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="sslc_passout_year">SSLC Passout year</label>
+                    <input type="text" id="sslc_year" name="sslc_year" maxlength="4" value="{{ student.passout_year_sslc }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="hsc">HSC %</label>
+                    <input type="text" id="hsc" name="hsc" value="{{ student.hsc_per }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="hsc_passout_year">HSC Passout year</label>
+                    <input type="text" id="hsc_year" name="hsc_year" maxlength="10" value="{{ student.passout_year_hsc }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="skill">Skill</label>
+                    <input type="text" id="skill" name="skill" value="{{ student.skill }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="resume">Upload Resume (PDF only)</label>
+                    <input type="file" id="resume" name="resume" accept=".pdf">
+                </div>
+                <div class="form-group">
+                    <label for="profile_pic">Upload Image (JPG/PNG)</label>
+                    <input type="file" id="profile_pic" name="profile_pic" accept="image/*">
+                </div>
+            </div>
+            <button type="submit" class="submit-btn">Update</button>
+        </form>
+    </div>
+    {% endblock %}
+
+</body>
+</html>

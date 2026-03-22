@@ -1,0 +1,149 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placement Details | Placebridge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            height: 100vh;
+            background: #F3F4F6;
+        }
+        .sidebar {
+            width: 250px;
+            background: #2A3F54;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .sidebar button {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            padding: 10px;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+        }
+        .sidebar button:hover {
+            background: #1E2B3A;
+            border-radius: 5px;
+        }
+        .sidebar button img {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+        }
+        .logout-btn {
+            margin-top: auto;
+            background: #D9534F;
+        }
+        .logout-btn:hover {
+            background: #C9302C;
+        }
+        .content {
+            flex-grow: 1;
+            background: #FFFFFF;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px;
+            overflow-y: auto;
+        }
+        .content h2 {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #2A3F54;
+            color: white;
+        }
+        tr:hover {
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <button onclick="location.href='{% url 'student_dashboard' %}'"><img src="{% static 'placement/uprofile.png' %}" alt="Update Profile">Update Profile</button>
+        <button onclick="location.href='{% url 'stplacement_details' %}'"><img src="{% static 'placement/plist.png' %}" alt="Placement List">Placement List</button>
+        <button onclick="location.href='{% url 'stapplication_details' %}'"><img src="{% static 'placement/papply.png' %}" alt="Placement Applied">Placement Applied List</button>
+        <button onclick="location.href='{% url 'st_alumni' %}'"><img src="{% static 'placement/alumini.png' %}" alt="Alumni">Alumni</button>
+        <button onclick="location.href='{% url 'stnotification' %}'"><img src="{% static 'placement/notification.png' %}" alt="Notification">Notification</button>
+        <button class="logout-btn" onclick="confirmLogout()"><img src="{% static 'placement/logout.png' %}" alt="Log Out">Log out</button>
+    </div>
+
+    <!-- Content Area -->
+    <div class="content">
+        <h2>Your Notifications</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Placement ID</th>
+                    <th>Company</th>
+                    <th>Email</th>
+                    <th>Contact Number</th>
+                    <th>Position</th>
+                    <th>Skill</th>
+                    <th>Date of Drive</th>
+                    <th>Backlogs</th>
+                    <th>CGPA</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in applications %}
+                <tr>
+                    <td>{{ application.placement_id }}</td>
+                    <td>{{ application.placement_id.company_id.company_name }}</td>
+                    <td>{{ application.placement_id.email }}</td>
+                    <td>{{ application.placement_id.contact_number }}</td>
+                    <td>{{ application.placement_id.position }}</td>
+                    <td>{{ application.placement_id.skill }}</td>
+                    <td>{{ application.placement_id.date_of_drive }}</td>
+                    <td>{{ application.placement_id.backlogs }}</td>
+                    <td>{{ application.placement_id.cgpa }}</td>
+                    <td>{{ application.status }}</td>                   
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function confirmLogout() {
+            if (confirm("Are you sure you want to log out?")) {
+                location.href = '{% url 'logout' %}';
+            }
+        }
+    </script>
+</body>
+</html>

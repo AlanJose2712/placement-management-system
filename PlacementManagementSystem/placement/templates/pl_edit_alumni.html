@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student Profile | Placebridge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            height: 100vh;
+            background: #F3F4F6;
+        }
+        .sidebar {
+            width: 250px;
+            background: #2A3F54;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .sidebar button {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            padding: 10px;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+        }
+        .sidebar button:hover {
+            background: #1E2B3A;
+            border-radius: 5px;
+        }
+        .content {
+            flex-grow: 1;
+            padding: 30px;
+        }
+        .container {
+            max-width: 800px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .btn {
+            background: #2A3F54;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 20px;
+            width: 100%;
+        }
+        .btn:hover {
+            background: #1E2B3A;
+        }
+        .sidebar img {
+            width: 20px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <button onclick="location.href='{% url 'placement_dashboard' %}'"><img src="{% static 'placement/hiring.png' %}" alt="New Placement"> New Placement</button>
+        <button onclick="location.href='{% url 'pl_placement_details' %}'"><img src="{% static 'placement/details.png' %}" alt="Placement Details"> Placement Details</button>
+        <button onclick="location.href='{% url 'pl_student_profile' %}'"><img src="{% static 'placement/student.png' %}" alt="Student Profile"> Student Profile</button>
+        <button onclick="location.href='{% url 'pl_applied_students' %}'"><img src="{% static 'placement/appstu.png' %}" alt="Applied Students"> Applied Student Details</button>
+        <button onclick="location.href='{% url 'pl_alumni' %}'"><img src="{% static 'placement/alumini.png' %}" alt="Alumni"> Alumni</button>
+        <button class="logout-btn" onclick="confirmLogout()"><img src="{% static 'placement/logout.png' %}" alt="Log Out"> Log Out</button>
+    </div>
+    <div class="content">
+        <div class="container">
+            <h2>Edit Student Profile</h2>
+            <form method="POST" action="{% url 'pl_edit_alumni' alumni.alumni_id %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-container">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" value="{{ alumni.name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="company">Company Name</label>
+                        <select id="company" name="company" required>
+                            {% for company in companies %}
+                            <option value="{{ company.company_id }}" {% if company.company_id == alumni.company_id %} selected {% endif %}>
+                                {{ company.company_name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="position">Current Position</label>
+                        <input type="text" id="position" name="position" value="{{ alumni.position }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="previous">Previous Status (Optional)</label>
+                        <input type="text" id="previous" name="previous" value="{{ alumni.previous_status }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="contact">Contact Number</label>
+                        <input type="text" id="contact" name="contact" pattern="[0-9]{10}" maxlength="10" value="{{ alumni.contact }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-Mail ID</label>
+                        <input type="email" id="email" name="email" value="{{ alumni.email }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="linkedin">LinkedIn Profile</label>
+                        <input type="url" id="linkedin" name="linkedin" value="{{ alumni.linkedin }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="branch">Branch</label>
+                        <input type="text" id="branch" name="branch" value="{{ alumni.branch }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="passout">Year of Passout</label>
+                        <input type="text" id="passout" name="passout" value="{{ alumni.passout_year }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile">Profile Picture</label>
+                        <input type="file" id="profile" name="profile" accept="image/*">
+                    </div>
+                </div>
+                <button type="submit" class="btn">Update</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        function confirmLogout() {
+            let confirmation = confirm("Are you sure you want to log out?");
+            if (confirmation) {
+                window.location.href = "{% url 'logout' %}";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placement Apply | Placebridge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            height: 100vh;
+            background: #F3F4F6;
+        }
+        .sidebar {
+            width: 250px;
+            background: #2A3F54;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .sidebar button {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            padding: 10px;
+            text-align: left;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+        }
+        .sidebar button:hover {
+            background: #1E2B3A;
+            border-radius: 5px;
+        }
+        .sidebar button img {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+        }
+        .logout-btn {
+            margin-top: auto;
+            background: #D9534F;
+        }
+        .logout-btn:hover {
+            background: #C9302C;
+        }
+
+        /* Form Styling */
+        .container {
+            flex-grow: 1;
+            background: #FFFFFF;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2A3F54;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-weight: 600;
+            margin: 10px 0 5px;
+            color: #2A3F54;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        input[readonly] {
+            background: #f0f0f0;
+            cursor: not-allowed;
+        }
+        button {
+            padding: 12px;
+            background: #2A3F54;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #1E2B3A;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            .sidebar {
+                width: 100%;
+                text-align: center;
+            }
+            .container {
+                margin: 20px auto;
+            }
+        }
+    </style>
+    <script>
+        function validateForm() {
+            let cgpa = parseFloat(document.getElementById("cgpa").value);
+            let backlogs = parseInt(document.getElementById("backlogs").value);
+            let requiredCgpa = parseFloat("{{ placement.cgpa }}");
+            let allowedBacklogs = parseInt("{{ placement.backlogs }}");
+    
+            if (cgpa < requiredCgpa) {
+                alert("You do not meet the CGPA requirement. Required: " + requiredCgpa);
+                return false; // Prevent form submission
+            }
+            if (backlogs > allowedBacklogs) {
+                alert("You do not meet the backlog requirement. Maximum allowed: " + allowedBacklogs);
+                return false; // Prevent form submission
+            }
+            alert("Your application has been submitted successfully!");
+            return true; // Allow form submission if conditions are met
+        }
+    </script>
+    </head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <button onclick="location.href='{% url 'student_dashboard' %}'"><img src="{% static 'placement/uprofile.png' %}" alt="Update Profile">Update Profile</button>
+        <button onclick="location.href='{% url 'stplacement_details' %}'"><img src="{% static 'placement/plist.png' %}" alt="Placement List">Placement List</button>
+        <button onclick="location.href='{% url 'stapplication_details' %}'"><img src="{% static 'placement/papply.png' %}" alt="Placement Applied">Placement Applied List</button>
+        <button onclick="location.href='{% url 'st_alumni' %}'"><img src="{% static 'placement/alumini.png' %}" alt="Alumni">Alumni</button>
+        <button onclick="location.href='{% url 'student_dashboard' %}'"><img src="{% static 'placement/notification.png' %}" alt="Notification">Notification</button>
+        <button class="logout-btn" onclick="confirmLogout()"><img src="{% static 'placement/logout.png' %}" alt="Log Out">Log out</button>
+    </div>
+
+    <!-- Content Area -->
+    <div class="container">
+        <h2>Apply for Placement</h2>
+        <form method="POST" action="{% url 'placement_apply' placement.placement_id %}" onsubmit="return validateForm()">
+            {% csrf_token %}
+            
+            <label for="placement_id">Placement ID:</label>
+            <input type="text" id="placement_id" name="placement_id" value="{{ placement.placement_id }}" readonly>
+        
+            <label for="student_id">Student ID:</label>
+            <input type="text" id="student_id" name="student_id" value="{{ student }}" readonly>
+        
+            <label for="cgpa">CGPA:</label>
+            <input type="number" step="0.01" id="cgpa" name="cgpa" min=0 required>
+        
+            <label for="passout_year">Passout Year:</label>
+            <input type="number" id="passout_year" name="passout_year" min="{{current_year}}" required>
+        
+            <label for="backlogs">Backlogs:</label>
+            <input type="number" id="backlogs" name="backlogs" min=0 required>
+            
+            <button type="submit">Apply Now</button>
+        </form>
+        
+    </div>
+
+    <script>
+        function confirmLogout() {
+            if (confirm("Are you sure you want to log out?")) {
+                location.href = '{% url 'logout' %}';
+            }
+        }
+    </script>
+</body>
+</html>
